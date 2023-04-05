@@ -197,22 +197,22 @@ tvm_output = module.get_output(0, tvm.nd.empty(output_shape)).numpy()
 # CPU noise, we run the computation in multiple batches in multiple
 # repetitions, then gather some basis statistics on the mean, median, and
 # standard deviation.
-import timeit
-
-timing_number = 10
-timing_repeat = 10
-unoptimized = (
-    np.array(timeit.Timer(lambda: module.run()).repeat(repeat=timing_repeat, number=timing_number))
-    * 1000
-    / timing_number
-)
-unoptimized = {
-    "mean": np.mean(unoptimized),
-    "median": np.median(unoptimized),
-    "std": np.std(unoptimized),
-}
-
-print(unoptimized)
+# import timeit
+#
+# timing_number = 10
+# timing_repeat = 10
+# unoptimized = (
+#     np.array(timeit.Timer(lambda: module.run()).repeat(repeat=timing_repeat, number=timing_number))
+#     * 1000
+#     / timing_number
+# )
+# unoptimized = {
+#     "mean": np.mean(unoptimized),
+#     "median": np.median(unoptimized),
+#     "std": np.std(unoptimized),
+# }
+#
+# print(unoptimized)
 
 ################################################################################
 # Postprocess the output
@@ -292,8 +292,8 @@ from tvm import autotvm
 # value to 0 disables it. The ``timeout`` places an upper limit on how long to
 # run training code for each tested configuration.
 
-number = 10
-repeat = 1
+number = 4  # only test a single configuration at a time
+repeat = 1  # each configuration is tested X times
 min_repeat_ms = 0  # since we're tuning on a CPU, can be set to 0
 timeout = 10  # in seconds
 
@@ -355,7 +355,7 @@ tasks = autotvm.task.extract_from_program(mod["main"], target=target, params=par
 # Tune the extracted tasks sequentially.
 for i, task in enumerate(tasks):
     prefix = "[Task %2d/%2d] " % (i + 1, len(tasks))
-    tuner_obj = XGBTuner(task, loss_type="rank")
+    tuner_obj = XGBTuner(task, loss_type="rank", num_threads=1)
     tuner_obj.tune(
         n_trial=min(tuning_option["trials"], len(task.config_space)),
         early_stopping=tuning_option["early_stopping"],
@@ -365,6 +365,9 @@ for i, task in enumerate(tasks):
             autotvm.callback.log_to_file(tuning_option["tuning_records"]),
         ],
     )
+
+# ex of measure result during run
+# MeasureResult(costs=(0.002178194,), error_no=MeasureErrorNo.NO_ERROR, all_cost=1.899115800857544, timestamp=1680636550.788515)
 
 ################################################################################
 # The output from this tuning process will look something like this:
