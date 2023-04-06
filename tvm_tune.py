@@ -197,22 +197,22 @@ tvm_output = module.get_output(0, tvm.nd.empty(output_shape)).numpy()
 # CPU noise, we run the computation in multiple batches in multiple
 # repetitions, then gather some basis statistics on the mean, median, and
 # standard deviation.
-# import timeit
-#
-# timing_number = 10
-# timing_repeat = 10
-# unoptimized = (
-#     np.array(timeit.Timer(lambda: module.run()).repeat(repeat=timing_repeat, number=timing_number))
-#     * 1000
-#     / timing_number
-# )
-# unoptimized = {
-#     "mean": np.mean(unoptimized),
-#     "median": np.median(unoptimized),
-#     "std": np.std(unoptimized),
-# }
-#
-# print(unoptimized)
+import timeit
+
+timing_number = 10
+timing_repeat = 10
+unoptimized = (
+    np.array(timeit.Timer(lambda: module.run()).repeat(repeat=timing_repeat, number=timing_number))
+    * 1000
+    / timing_number
+)
+unoptimized = {
+    "mean": np.mean(unoptimized),
+    "median": np.median(unoptimized),
+    "std": np.std(unoptimized),
+}
+
+print(unoptimized)
 
 ################################################################################
 # Postprocess the output
@@ -292,8 +292,8 @@ from tvm import autotvm
 # value to 0 disables it. The ``timeout`` places an upper limit on how long to
 # run training code for each tested configuration.
 
-number = 4  # only test a single configuration at a time
-repeat = 1  # each configuration is tested X times
+number = 1  # only test a single configuration at a time
+repeat = 100  # each configuration is tested X times. Keep in mind that for psutil, they reccomend a measure duration of at least 0.1s, so you should run the model at least 0.1s for measuring to be *somewhat* accurate
 min_repeat_ms = 0  # since we're tuning on a CPU, can be set to 0
 timeout = 10  # in seconds
 
@@ -301,7 +301,7 @@ timeout = 10  # in seconds
 runner = autotvm.LocalRunner(
     number=number,
     repeat=repeat,
-    timeout=timeout,
+    timeout=60*5,  # in seconds
     min_repeat_ms=min_repeat_ms,
     enable_cpu_cache_flush=True,
 )
@@ -324,12 +324,12 @@ runner = autotvm.LocalRunner(
 
 tuning_option = {
     "tuner": "xgb",
-    "trials": 20,
+    "trials": 1,
     "early_stopping": 100,
     "measure_option": autotvm.measure_option(
         builder=autotvm.LocalBuilder(build_func="default"), runner=runner
     ),
-    "tuning_records": "resnet-50-v2-autotuning.json",
+    "tuning_records": "resnet-50-v2-autotuning_with_energy.json",
 }
 
 ################################################################################
@@ -463,7 +463,7 @@ optimized = (
 )
 optimized = {"mean": np.mean(optimized), "median": np.median(optimized), "std": np.std(optimized)}
 
-
+# ointervalintervaltime in milliseconds!
 print("optimized: %s" % (optimized))
 print("unoptimized: %s" % (unoptimized))
 
