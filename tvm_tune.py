@@ -292,16 +292,16 @@ from tvm import autotvm
 # value to 0 disables it. The ``timeout`` places an upper limit on how long to
 # run training code for each tested configuration.
 
-number = 1  # only test a single configuration at a time
+number = 10  # only test a single configuration at a time
 repeat = 100  # each configuration is tested X times. Keep in mind that for psutil, they reccomend a measure duration of at least 0.1s, so you should run the model at least 0.1s for measuring to be *somewhat* accurate
-min_repeat_ms = 0  # since we're tuning on a CPU, can be set to 0
-timeout = 10  # in seconds
+min_repeat_ms = 10  # since we're tuning on a CPU, can be set to 0
+timeout = 20  # in seconds
 
 # create a TVM runner
 runner = autotvm.LocalRunner(
     number=number,
     repeat=repeat,
-    timeout=60*5,  # in seconds
+    timeout=10,  # in seconds
     min_repeat_ms=min_repeat_ms,
     enable_cpu_cache_flush=True,
 )
@@ -324,10 +324,11 @@ runner = autotvm.LocalRunner(
 
 tuning_option = {
     "tuner": "xgb",
-    "trials": 1,
+    "trials": 200,
     "early_stopping": 100,
     "measure_option": autotvm.measure_option(
-        builder=autotvm.LocalBuilder(build_func="default"), runner=runner
+        # local runner has n_parallel=1 hardcoded by default
+        builder=autotvm.LocalBuilder(build_func="default", n_parallel=1), runner=runner
     ),
     "tuning_records": "resnet-50-v2-autotuning_with_energy.json",
 }
