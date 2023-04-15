@@ -21,7 +21,7 @@ Compiling and Optimizing a Model with the Python Interface (AutoTVM)
 `Chris Hoge <https://github.com/hogepodge>`_
 
 In the `TVMC Tutorial <tvmc_command_line_driver>`_, we covered how to compile, run, and tune a
-pre-trained vision model, ResNet-50 v2 using the command line interface for
+pre-trained vision model, ResNet-18 v2 using the command line interface for
 TVM, TVMC. TVM is more that just a command-line tool though, it is an
 optimizing framework with APIs available for a number of different languages
 that gives you tremendous flexibility in working with machine learning models.
@@ -30,7 +30,7 @@ In this tutorial we will cover the same ground we did with TVMC, but show how
 it is done with the Python API. Upon completion of this section, we will have
 used the Python API for TVM to accomplish the following tasks:
 
-* Compile a pre-trained ResNet-50 v2 model for the TVM runtime.
+* Compile a pre-trained ResNet-18 v2 model for the TVM runtime.
 * Run a real image through the compiled model, and interpret the output and model
   performance.
 * Tune the model that model on a CPU using TVM.
@@ -67,12 +67,12 @@ from tvm.contrib import graph_executor
 # Downloading and Loading the ONNX Model
 # --------------------------------------
 #
-# For this tutorial, we will be working with ResNet-50 v2. ResNet-50 is a
-# convolutional neural network that is 50 layers deep and designed to classify
+# For this tutorial, we will be working with ResNet-18 v2. ResNet-18 is a
+# convolutional neural network that is 18 layers deep and designed to classify
 # images. The model we will be using has been pre-trained on more than a
 # million images with 1000 different classifications. The network has an input
 # image size of 224x224. If you are interested exploring more of how the
-# ResNet-50 model is structured, we recommend downloading
+# ResNet-18 model is structured, we recommend downloading
 # `Netron <https://netron.app>`_, a freely available ML model viewer.
 #
 # TVM provides a helper library to download pre-trained models. By providing a
@@ -89,10 +89,10 @@ from tvm.contrib import graph_executor
 model_url = (
     "https://github.com/onnx/models/raw/main/"
     "vision/classification/resnet/model/"
-    "resnet50-v2-7.onnx"
+    "resnet18-v2-7.onnx"
 )
 
-model_path = download_testdata(model_url, "resnet50-v2-7.onnx", module="onnx")
+model_path = download_testdata(model_url, "resnet18-v2-7.onnx", module="onnx")
 onnx_model = onnx.load(model_path)
 
 # Seed numpy's RNG to get consistent results
@@ -222,7 +222,7 @@ print(unoptimized)
 # providing output tensors.
 #
 # In our case, we need to run some post-processing to render the outputs from
-# ResNet-50 v2 into a more human-readable form, using the lookup-table provided
+# ResNet-18 v2 into a more human-readable form, using the lookup-table provided
 # for the model.
 
 from scipy.special import softmax
@@ -330,7 +330,7 @@ tuning_option = {
         # local runner has n_parallel=1 hardcoded by default
         builder=autotvm.LocalBuilder(build_func="default", n_parallel=1), runner=runner
     ),
-    "tuning_records": "resnet-50-v2-autotuning_with_energy.json",
+    "tuning_records": "resnet-18-v2-autotuning_with_energy.json",
 }
 
 ################################################################################
@@ -406,7 +406,7 @@ for i, task in enumerate(tasks):
 # ----------------------------------------------
 #
 # As an output of the tuning process above, we obtained the tuning records
-# stored in ``resnet-50-v2-autotuning.json``. The compiler will use the results to
+# stored in ``resnet-18-v2-autotuning.json``. The compiler will use the results to
 # generate high performance code for the model on your specified target.
 #
 # Now that tuning data for the model has been collected, we can re-compile the
@@ -478,6 +478,6 @@ print("unoptimized: %s" % (unoptimized))
 # demonstrated how to compare the performance of the unoptimized and optimize
 # models.
 #
-# Here we presented a simple example using ResNet-50 v2 locally. However, TVM
+# Here we presented a simple example using ResNet-18 v2 locally. However, TVM
 # supports many more features including cross-compilation, remote execution and
 # profiling/benchmarking.
