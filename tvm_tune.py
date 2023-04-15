@@ -42,6 +42,9 @@ The goal of this section is to give you an overview of TVM's capabilites and
 how to use them through the Python API.
 """
 
+# pick your flavor of resnet<XX>-v2-7.onnx
+# https://github.com/onnx/models/tree/main/vision/classification/resnet/model
+RESNET = 34
 
 ################################################################################
 # TVM is a deep learning compiler framework, with a number of different modules
@@ -87,12 +90,12 @@ from tvm.contrib import graph_executor
 #   Documentation.
 
 model_url = (
-    "https://github.com/onnx/models/raw/main/"
-    "vision/classification/resnet/model/"
-    "resnet18-v2-7.onnx"
+    f"https://github.com/onnx/models/raw/main/"
+    f"vision/classification/resnet/model/"
+    f"resnet{RESNET}-v2-7.onnx"
 )
 
-model_path = download_testdata(model_url, "resnet18-v2-7.onnx", module="onnx")
+model_path = download_testdata(model_url, f"resnet{RESNET}-v2-7.onnx", module="onnx")
 onnx_model = onnx.load(model_path)
 
 # Seed numpy's RNG to get consistent results
@@ -330,7 +333,7 @@ tuning_option = {
         # local runner has n_parallel=1 hardcoded by default
         builder=autotvm.LocalBuilder(build_func="default", n_parallel=1), runner=runner
     ),
-    "tuning_records": "resnet-18-v2-autotuning_with_energy.json",
+    "tuning_records": f"resnet-{RESNET}-v2-autotuning_with_energy.json",
 }
 
 ################################################################################
