@@ -192,6 +192,15 @@ module.run()
 output_shape = (1, 1000)
 tvm_output = module.get_output(0, tvm.nd.empty(output_shape)).numpy()
 
+######################################################################
+# Count the total model of floating point operations within this model
+from tvm import autotvm
+
+total_flop_count = 0
+tasks = autotvm.task.extract_from_program(mod["main"], target=target, params=params)
+for i, task in enumerate(tasks):
+    total_flop_count += task.flop
+
 ################################################################################
 # Collect Basic Performance Data
 # ------------------------------
@@ -201,21 +210,54 @@ tvm_output = module.get_output(0, tvm.nd.empty(output_shape)).numpy()
 # repetitions, then gather some basis statistics on the mean, median, and
 # standard deviation.
 import timeit
+from pyJoules.device import DeviceFactory
+from pyJoules.device.rapl_device import RaplPackageDomain, RaplDramDomain, RaplCoreDomain, RaplUncoreDomain
+from pyJoules.energy_meter import EnergyMeter
 
-timing_number = 10
-timing_repeat = 10
-unoptimized = (
-    np.array(timeit.Timer(lambda: module.run()).repeat(repeat=timing_repeat, number=timing_number))
-    * 1000
+# manually construct energy meter. Refer to docs here: https://pyjoules.readthedocs.io/en/latest/usages/manual_usage.html
+domains = [RaplPackageDomain(0), RaplUncoreDomain(0), RaplDramDomain(0)]
+devices = DeviceFactory.create_devices(domains)
+meter = EnergyMeter(devices)
+
+timing_number = 100  # number of times to run the model in a single timing loop
+timing_repeat = 10  # number of times to repeat the timing loop (length of the results array)
+
+meter.start()
+raw_results = timeit.Timer(lambda: module.run()).repeat(repeat=timing_repeat, number=timing_number)
+meter.stop()
+
+# get the energy consumption
+trace = meter.get_trace()
+sample = trace[0]  # only one sample covering the entire period, as no "hotspots" were specified
+# I take the package domain and subtract integrated graphics, the add DRAM as well. You can refer to the following diagram for explanation:
+# https://pyjoules.readthedocs.io/en/latest/devices/intel_cpu.html#domains
+total_energy_uJ = (sample.energy['package_0'] - sample.energy['uncore_0'] + sample.energy['dram_0'])
+total_energy_J = total_energy_uJ / 1e6
+average_energy_per_inference_J = total_energy_J / timing_number
+
+unoptimized_times_s = (
+    np.array(raw_results)
     / timing_number
 )
-unoptimized = {
-    "mean": np.mean(unoptimized),
-    "median": np.median(unoptimized),
-    "std": np.std(unoptimized),
+unoptimized_flops = total_flop_count / unoptimized_times_s
+unoptimized_watts = average_energy_per_inference_J / unoptimized_times_s
+unoptimized_flops_per_watt = unoptimized_flops / unoptimized_watts
+unoptimized_gflops_per_watt = unoptimized_flops_per_watt / 1e9  # convert to gigaflops
+
+unoptimized_stats_seconds = {
+    "mean": np.mean(unoptimized_times_s),
+    "median": np.median(unoptimized_times_s),
+    "std": np.std(unoptimized_times_s),
+}
+unoptimized_stats_gflops_per_watt = {
+    "mean": np.mean(unoptimized_gflops_per_watt),
+    "median": np.median(unoptimized_gflops_per_watt),
+    "std": np.std(unoptimized_gflops_per_watt),
 }
 
-print(unoptimized)
+# ointervalintervaltime in milliseconds!
+print("unoptimized time: %s" % (unoptimized_stats_seconds))
+print("unoptimized gflops/watt: %s" % (unoptimized_stats_gflops_per_watt))
 
 ################################################################################
 # Postprocess the output
@@ -228,21 +270,21 @@ print(unoptimized)
 # ResNet-18 v2 into a more human-readable form, using the lookup-table provided
 # for the model.
 
-from scipy.special import softmax
-
-# Download a list of labels
-labels_url = "https://s3.amazonaws.com/onnx-model-zoo/synset.txt"
-labels_path = download_testdata(labels_url, "synset.txt", module="data")
-
-with open(labels_path, "r") as f:
-    labels = [l.rstrip() for l in f]
-
-# Open the output and read the output tensor
-scores = softmax(tvm_output)
-scores = np.squeeze(scores)
-ranks = np.argsort(scores)[::-1]
-for rank in ranks[0:5]:
-    print("class='%s' with probability=%f" % (labels[rank], scores[rank]))
+# from scipy.special import softmax
+#
+# # Download a list of labels
+# labels_url = "https://s3.amazonaws.com/onnx-model-zoo/synset.txt"
+# labels_path = download_testdata(labels_url, "synset.txt", module="data")
+#
+# with open(labels_path, "r") as f:
+#     labels = [l.rstrip() for l in f]
+#
+# # Open the output and read the output tensor
+# scores = softmax(tvm_output)
+# scores = np.squeeze(scores)
+# ranks = np.argsort(scores)[::-1]
+# for rank in ranks[0:5]:
+#     print("class='%s' with probability=%f" % (labels[rank], scores[rank]))
 
 ################################################################################
 # This should produce the following output:
@@ -295,7 +337,7 @@ from tvm import autotvm
 # value to 0 disables it. The ``timeout`` places an upper limit on how long to
 # run training code for each tested configuration.
 
-number = 10  # only test a single configuration at a time
+number = 10 # 250  # only test a single configuration at a time
 repeat = 100  # each configuration is tested X times. Keep in mind that for psutil, they reccomend a measure duration of at least 0.1s, so you should run the model at least 0.1s for measuring to be *somewhat* accurate
 min_repeat_ms = 10  # since we're tuning on a CPU, can be set to 0
 timeout = 20  # in seconds
@@ -327,7 +369,7 @@ runner = autotvm.LocalRunner(
 
 tuning_option = {
     "tuner": "xgb",
-    "trials": 200,
+    "trials": 4,
     "early_stopping": 100,
     "measure_option": autotvm.measure_option(
         # local runner has n_parallel=1 hardcoded by default
@@ -425,17 +467,17 @@ module = graph_executor.GraphModule(lib["default"](dev))
 ################################################################################
 # Verify that the optimized model runs and produces the same results:
 
-dtype = "float32"
-module.set_input(input_name, img_data)
-module.run()
-output_shape = (1, 1000)
-tvm_output = module.get_output(0, tvm.nd.empty(output_shape)).numpy()
-
-scores = softmax(tvm_output)
-scores = np.squeeze(scores)
-ranks = np.argsort(scores)[::-1]
-for rank in ranks[0:5]:
-    print("class='%s' with probability=%f" % (labels[rank], scores[rank]))
+# dtype = "float32"
+# module.set_input(input_name, img_data)
+# module.run()
+# output_shape = (1, 1000)
+# tvm_output = module.get_output(0, tvm.nd.empty(output_shape)).numpy()
+#
+# scores = softmax(tvm_output)
+# scores = np.squeeze(scores)
+# ranks = np.argsort(scores)[::-1]
+# for rank in ranks[0:5]:
+#     print("class='%s' with probability=%f" % (labels[rank], scores[rank]))
 
 ################################################################################
 # Verifying that the predictions are the same:
@@ -456,20 +498,47 @@ for rank in ranks[0:5]:
 # hardware, number of iterations, and other factors, you should see a performance
 # improvement in comparing the optimized model to the unoptimized model.
 
-import timeit
+meter.start()
+raw_results = timeit.Timer(lambda: module.run()).repeat(repeat=timing_repeat, number=timing_number)
+meter.stop()
 
-timing_number = 10
-timing_repeat = 10
-optimized = (
-    np.array(timeit.Timer(lambda: module.run()).repeat(repeat=timing_repeat, number=timing_number))
-    * 1000
+# get the energy consumption
+trace = meter.get_trace()
+sample = trace[0] # only one sample covering the entire period, as no "hotspots" were specified
+# I take the package domain and subtract integrated graphics, the add DRAM as well. You can refer to the following diagram for explanation:
+# https://pyjoules.readthedocs.io/en/latest/devices/intel_cpu.html#domains
+total_energy_uJ = (sample.energy['package_0'] - sample.energy['uncore_0'] + sample.energy['dram_0'])
+total_energy_J = total_energy_uJ / 1e6
+average_energy_per_inference_J = total_energy_J / timing_number
+
+optimized_times_s = (
+    np.array(raw_results)
     / timing_number
 )
-optimized = {"mean": np.mean(optimized), "median": np.median(optimized), "std": np.std(optimized)}
+optimized_flops = total_flop_count / optimized_times_s
+optimized_watts = average_energy_per_inference_J / optimized_times_s
+optimized_flops_per_watt = optimized_flops / optimized_watts
+optimized_gflops_per_watt = optimized_flops_per_watt / 1e9  # convert to gigaflops
 
+optimized_stats_seconds = {
+    "mean": np.mean(optimized_times_s),
+    "median": np.median(optimized_times_s),
+    "std": np.std(optimized_times_s),
+}
+optimized_stats_gflops_per_watt = {
+    "mean": np.mean(optimized_gflops_per_watt),
+    "median": np.median(optimized_gflops_per_watt),
+    "std": np.std(optimized_gflops_per_watt),
+}
 # ointervalintervaltime in milliseconds!
-print("optimized: %s" % (optimized))
-print("unoptimized: %s" % (unoptimized))
+print("\n" * 2)
+print(f"Resnet {RESNET}")
+print("unoptimized time: %s" % (unoptimized_stats_seconds))
+print("unoptimized gflops/watt: %s" % (unoptimized_stats_gflops_per_watt))
+print("optimized time: %s" % (optimized_stats_seconds))
+print("optimized gflops/watt: %s" % (optimized_stats_gflops_per_watt))
+print("\n" * 2)
+
 
 ################################################################################
 # Final Remarks
