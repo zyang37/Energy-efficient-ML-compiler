@@ -1,8 +1,8 @@
 import numpy as np
 from tvm.autotvm.record import load_from_file
-import plotly.express as px
+from matplotlib import pyplot as plt
 
-records_file = "resnet-18-v2-autotuning_with_energy.json"
+records_file = "resnet-101-v2-autotuning_with_energy.json"
 
 records = load_from_file(records_file)
 
@@ -24,22 +24,34 @@ def calculate_average_gflops_per_watt(inp, res):
 
   return average_gflops_per_watt
 
+best_records = []
+plot_legends = []
+fig, ax = plt.subplots(figsize=(10, 7))
 for i, (workload, records) in enumerate(workloads_dict.items()):
   history = []
+  best = -1
+  best_record = None
+  plot_legends.append(workload[0]+' '+str(i))
   for record in records:
     try:
       average_gflops_per_watt = calculate_average_gflops_per_watt(*record)
     except:
       average_gflops_per_watt = 0
-    history.append(average_gflops_per_watt)
+    if average_gflops_per_watt > best:
+        best = average_gflops_per_watt
+        best_record = record
 
-  fig = px.line(x=range(len(history)), y=history)
-  fig.update_layout(
-    title=f"Workload: {i}",
-  )
+    history.append(best)
 
-  # save figure in plotting directory with name of the workload
-  fig.write_image("plotting/%s.png" % (i))
+  ax.plot(range(len(history)), history)
+  best_records.append(best_record)
 
+ax.set_title('Best GFlops/watt by iteration')
+ax.legend(plot_legends, bbox_to_anchor=(1.14, 0.4), loc=5)
+ax.xaxis.set_label_text('Iterations')
+ax.yaxis.set_label_text('Average GFlops/Watt')
+plt.tight_layout()
+plt.savefig('resnet-101.png')
 
-
+#for record in best_records:
+#    print(record)
