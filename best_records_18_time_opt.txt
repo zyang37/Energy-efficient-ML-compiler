@@ -1,0 +1,78 @@
+Best 5 records for:  conv2d_NCHWc.x86 0
+	OrderedDict([('tile_ic', [-1, 3]), ('tile_oc', [-1, 64]), ('tile_ow', [-1, 1]), ('unroll_kw', False)]), time spent: 1.3171555995941162
+	OrderedDict([('tile_ic', [-1, 3]), ('tile_oc', [-1, 64]), ('tile_ow', [-1, 1]), ('unroll_kw', True)]), time spent: 1.3306794166564941
+	OrderedDict([('tile_ic', [-1, 1]), ('tile_oc', [-1, 16]), ('tile_ow', [-1, 4]), ('unroll_kw', False)]), time spent: 1.3859217166900635
+	OrderedDict([('tile_ic', [-1, 1]), ('tile_oc', [-1, 64]), ('tile_ow', [-1, 1]), ('unroll_kw', True)]), time spent: 1.4002366065979004
+	OrderedDict([('tile_ic', [-1, 1]), ('tile_oc', [-1, 32]), ('tile_ow', [-1, 7]), ('unroll_kw', False)]), time spent: 1.4034600257873535
+Best 5 records for:  conv2d_NCHWc.x86 1
+	OrderedDict([('tile_ic', [-1, 16]), ('tile_oc', [-1, 32]), ('tile_ow', [-1, 2]), ('unroll_kw', True)]), time spent: 1.289233684539795
+	OrderedDict([('tile_ic', [-1, 4]), ('tile_oc', [-1, 32]), ('tile_ow', [-1, 2]), ('unroll_kw', True)]), time spent: 1.3091895580291748
+	OrderedDict([('tile_ic', [-1, 1]), ('tile_oc', [-1, 16]), ('tile_ow', [-1, 4]), ('unroll_kw', True)]), time spent: 1.3205883502960205
+	OrderedDict([('tile_ic', [-1, 64]), ('tile_oc', [-1, 32]), ('tile_ow', [-1, 2]), ('unroll_kw', True)]), time spent: 1.331153154373169
+	OrderedDict([('tile_ic', [-1, 8]), ('tile_oc', [-1, 32]), ('tile_ow', [-1, 2]), ('unroll_kw', False)]), time spent: 1.3365671634674072
+Best 5 records for:  conv2d_NCHWc.x86 2
+	OrderedDict([('tile_ic', [-1, 64]), ('tile_oc', [-1, 4]), ('tile_ow', [-1, 7]), ('unroll_kw', True)]), time spent: 1.2864084243774414
+	OrderedDict([('tile_ic', [-1, 1]), ('tile_oc', [-1, 32]), ('tile_ow', [-1, 7]), ('unroll_kw', False)]), time spent: 1.289100170135498
+	OrderedDict([('tile_ic', [-1, 2]), ('tile_oc', [-1, 32]), ('tile_ow', [-1, 4]), ('unroll_kw', True)]), time spent: 1.3044862747192383
+	OrderedDict([('tile_ic', [-1, 1]), ('tile_oc', [-1, 64]), ('tile_ow', [-1, 1]), ('unroll_kw', False)]), time spent: 1.3124666213989258
+	OrderedDict([('tile_ic', [-1, 4]), ('tile_oc', [-1, 32]), ('tile_ow', [-1, 2]), ('unroll_kw', True)]), time spent: 1.320434808731079
+Best 5 records for:  conv2d_NCHWc.x86 3
+	OrderedDict([('tile_ic', [-1, 32]), ('tile_oc', [-1, 16]), ('tile_ow', [-1, 1]), ('tile_oh', 2)]), time spent: 1.2333226203918457
+	OrderedDict([('tile_ic', [-1, 64]), ('tile_oc', [-1, 32]), ('tile_ow', [-1, 2]), ('tile_oh', 1)]), time spent: 1.2346081733703613
+	OrderedDict([('tile_ic', [-1, 64]), ('tile_oc', [-1, 32]), ('tile_ow', [-1, 1]), ('tile_oh', 1)]), time spent: 1.2348639965057373
+	OrderedDict([('tile_ic', [-1, 1]), ('tile_oc', [-1, 64]), ('tile_ow', [-1, 1]), ('tile_oh', 2)]), time spent: 1.2360830307006836
+	OrderedDict([('tile_ic', [-1, 64]), ('tile_oc', [-1, 16]), ('tile_ow', [-1, 7]), ('tile_oh', 1)]), time spent: 1.2396817207336426
+Best 5 records for:  conv2d_NCHWc.x86 4
+	OrderedDict([('tile_ic', [-1, 32]), ('tile_oc', [-1, 8]), ('tile_ow', [-1, 4]), ('unroll_kw', True)]), time spent: 1.331453561782837
+	OrderedDict([('tile_ic', [-1, 128]), ('tile_oc', [-1, 16]), ('tile_ow', [-1, 4]), ('unroll_kw', True)]), time spent: 1.3649377822875977
+	OrderedDict([('tile_ic', [-1, 1]), ('tile_oc', [-1, 16]), ('tile_ow', [-1, 2]), ('unroll_kw', True)]), time spent: 1.378267526626587
+	OrderedDict([('tile_ic', [-1, 32]), ('tile_oc', [-1, 8]), ('tile_ow', [-1, 7]), ('unroll_kw', True)]), time spent: 1.3973894119262695
+	OrderedDict([('tile_ic', [-1, 32]), ('tile_oc', [-1, 16]), ('tile_ow', [-1, 4]), ('unroll_kw', False)]), time spent: 1.3989386558532715
+Best 5 records for:  conv2d_NCHWc.x86 5
+	OrderedDict([('tile_ic', [-1, 128]), ('tile_oc', [-1, 32]), ('tile_ow', [-1, 4]), ('unroll_kw', True)]), time spent: 1.3090007305145264
+	OrderedDict([('tile_ic', [-1, 8]), ('tile_oc', [-1, 16]), ('tile_ow', [-1, 4]), ('unroll_kw', True)]), time spent: 1.3157389163970947
+	OrderedDict([('tile_ic', [-1, 8]), ('tile_oc', [-1, 16]), ('tile_ow', [-1, 14]), ('unroll_kw', False)]), time spent: 1.316438913345337
+	OrderedDict([('tile_ic', [-1, 2]), ('tile_oc', [-1, 16]), ('tile_ow', [-1, 2]), ('unroll_kw', False)]), time spent: 1.321457862854004
+	OrderedDict([('tile_ic', [-1, 8]), ('tile_oc', [-1, 32]), ('tile_ow', [-1, 2]), ('unroll_kw', True)]), time spent: 1.3221280574798584
+Best 5 records for:  conv2d_NCHWc.x86 6
+	OrderedDict([('tile_ic', [-1, 128]), ('tile_oc', [-1, 4]), ('tile_ow', [-1, 2]), ('tile_oh', 2)]), time spent: 1.2846407890319824
+	OrderedDict([('tile_ic', [-1, 1]), ('tile_oc', [-1, 1]), ('tile_ow', [-1, 8]), ('tile_oh', 2)]), time spent: 1.3651280403137207
+	OrderedDict([('tile_ic', [-1, 32]), ('tile_oc', [-1, 64]), ('tile_ow', [-1, 4]), ('tile_oh', 1)]), time spent: 1.4111328125
+	OrderedDict([('tile_ic', [-1, 2]), ('tile_oc', [-1, 32]), ('tile_ow', [-1, 7]), ('tile_oh', 1)]), time spent: 1.471787691116333
+	OrderedDict([('tile_ic', [-1, 32]), ('tile_oc', [-1, 4]), ('tile_ow', [-1, 1]), ('tile_oh', 1)]), time spent: 1.526676893234253
+Best 5 records for:  conv2d_NCHWc.x86 7
+	OrderedDict([('tile_ic', [-1, 4]), ('tile_oc', [-1, 8]), ('tile_ow', [-1, 14]), ('unroll_kw', True)]), time spent: 1.352353572845459
+	OrderedDict([('tile_ic', [-1, 2]), ('tile_oc', [-1, 16]), ('tile_ow', [-1, 4]), ('unroll_kw', True)]), time spent: 1.3549237251281738
+	OrderedDict([('tile_ic', [-1, 2]), ('tile_oc', [-1, 16]), ('tile_ow', [-1, 4]), ('unroll_kw', False)]), time spent: 1.390791893005371
+	OrderedDict([('tile_ic', [-1, 64]), ('tile_oc', [-1, 8]), ('tile_ow', [-1, 14]), ('unroll_kw', False)]), time spent: 1.4067518711090088
+	OrderedDict([('tile_ic', [-1, 64]), ('tile_oc', [-1, 16]), ('tile_ow', [-1, 2]), ('unroll_kw', True)]), time spent: 1.454308032989502
+Best 5 records for:  conv2d_NCHWc.x86 8
+	OrderedDict([('tile_ic', [-1, 1]), ('tile_oc', [-1, 32]), ('tile_ow', [-1, 7]), ('unroll_kw', False)]), time spent: 1.4041187763214111
+	OrderedDict([('tile_ic', [-1, 64]), ('tile_oc', [-1, 16]), ('tile_ow', [-1, 7]), ('unroll_kw', True)]), time spent: 1.4254629611968994
+	OrderedDict([('tile_ic', [-1, 8]), ('tile_oc', [-1, 16]), ('tile_ow', [-1, 4]), ('unroll_kw', True)]), time spent: 1.4321887493133545
+	OrderedDict([('tile_ic', [-1, 64]), ('tile_oc', [-1, 16]), ('tile_ow', [-1, 1]), ('unroll_kw', False)]), time spent: 1.4592301845550537
+	OrderedDict([('tile_ic', [-1, 1]), ('tile_oc', [-1, 32]), ('tile_ow', [-1, 7]), ('unroll_kw', True)]), time spent: 1.4668865203857422
+Best 5 records for:  conv2d_NCHWc.x86 9
+	OrderedDict([('tile_ic', [-1, 16]), ('tile_oc', [-1, 16]), ('tile_ow', [-1, 7]), ('tile_oh', 2)]), time spent: 1.3114731311798096
+	OrderedDict([('tile_ic', [-1, 16]), ('tile_oc', [-1, 32]), ('tile_ow', [-1, 4]), ('tile_oh', 1)]), time spent: 1.31184720993042
+	OrderedDict([('tile_ic', [-1, 64]), ('tile_oc', [-1, 64]), ('tile_ow', [-1, 1]), ('tile_oh', 1)]), time spent: 1.31817626953125
+	OrderedDict([('tile_ic', [-1, 256]), ('tile_oc', [-1, 64]), ('tile_ow', [-1, 2]), ('tile_oh', 1)]), time spent: 1.318922996520996
+	OrderedDict([('tile_ic', [-1, 4]), ('tile_oc', [-1, 64]), ('tile_ow', [-1, 2]), ('tile_oh', 1)]), time spent: 1.3309061527252197
+Best 5 records for:  conv2d_NCHWc.x86 10
+	OrderedDict([('tile_ic', [-1, 1]), ('tile_oc', [-1, 16]), ('tile_ow', [-1, 7]), ('unroll_kw', True)]), time spent: 1.6105964183807373
+	OrderedDict([('tile_ic', [-1, 1]), ('tile_oc', [-1, 16]), ('tile_ow', [-1, 7]), ('unroll_kw', False)]), time spent: 1.6220710277557373
+	OrderedDict([('tile_ic', [-1, 32]), ('tile_oc', [-1, 32]), ('tile_ow', [-1, 4]), ('unroll_kw', False)]), time spent: 1.7028639316558838
+	OrderedDict([('tile_ic', [-1, 64]), ('tile_oc', [-1, 64]), ('tile_ow', [-1, 7]), ('unroll_kw', False)]), time spent: 1.703963279724121
+	OrderedDict([('tile_ic', [-1, 128]), ('tile_oc', [-1, 32]), ('tile_ow', [-1, 7]), ('unroll_kw', False)]), time spent: 1.7133302688598633
+Best 5 records for:  dense_nopack.x86 11
+	OrderedDict([('tile_y', [-1, 1]), ('tile_x', [-1, 10]), ('tile_k', [-1, 8])]), time spent: 1.3555893898010254
+	OrderedDict([('tile_y', [-1, 1]), ('tile_x', [-1, 4]), ('tile_k', [-1, 8])]), time spent: 1.3582062721252441
+	OrderedDict([('tile_y', [-1, 1]), ('tile_x', [-1, 25]), ('tile_k', [-1, 1])]), time spent: 1.3626189231872559
+	OrderedDict([('tile_y', [-1, 1]), ('tile_x', [-1, 5]), ('tile_k', [-1, 16])]), time spent: 1.3792734146118164
+	OrderedDict([('tile_y', [-1, 1]), ('tile_x', [-1, 5]), ('tile_k', [-1, 8])]), time spent: 1.3818738460540771
+Best 5 records for:  dense_pack.x86 12
+	OrderedDict([('tile_y', [-1, 1, 1]), ('tile_x', [-1, 125, 1]), ('tile_k', [-1, 16]), ('tile_inner', [-1, 1])]), time spent: 1.3365247249603271
+	OrderedDict([('tile_y', [-1, 1, 1]), ('tile_x', [-1, 2, 1]), ('tile_k', [-1, 2]), ('tile_inner', [-1, 1])]), time spent: 1.3407235145568848
+	OrderedDict([('tile_y', [-1, 1, 1]), ('tile_x', [-1, 10, 25]), ('tile_k', [-1, 16]), ('tile_inner', [-1, 1])]), time spent: 1.3495798110961914
+	OrderedDict([('tile_y', [-1, 1, 1]), ('tile_x', [-1, 10, 5]), ('tile_k', [-1, 16]), ('tile_inner', [-1, 1])]), time spent: 1.352963924407959
+	OrderedDict([('tile_y', [-1, 1, 1]), ('tile_x', [-1, 50, 1]), ('tile_k', [-1, 32]), ('tile_inner', [-1, 1])]), time spent: 1.3560595512390137
