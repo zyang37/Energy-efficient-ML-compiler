@@ -29,9 +29,11 @@ plot_legends = []
 fig, ax = plt.subplots(figsize=(10, 7))
 for i, (workload, records) in enumerate(workloads_dict.items()):
   history = []
+  plot_legends.append(workload[0]+' '+str(i))
   best = -1
   best_record = None
-  plot_legends.append(workload[0]+' '+str(i))
+
+  new_records = []
   for record in records:
     try:
       average_gflops_per_watt = calculate_average_gflops_per_watt(*record)
@@ -40,18 +42,24 @@ for i, (workload, records) in enumerate(workloads_dict.items()):
     if average_gflops_per_watt > best:
         best = average_gflops_per_watt
         best_record = record
-
     history.append(best)
 
+    new_records.append((record, average_gflops_per_watt))
+
+  new_records.sort(key=lambda a: a[1], reverse=True)
+
+
   ax.plot(range(len(history)), history)
-  best_records.append(best_record)
+  best_records.append(new_records[:5])
 
 ax.set_title('Best GFlops/watt by iteration')
 ax.legend(plot_legends, bbox_to_anchor=(1.14, 0.4), loc=5)
 ax.xaxis.set_label_text('Iterations')
 ax.yaxis.set_label_text('Average GFlops/Watt')
 plt.tight_layout()
-plt.savefig('resnet-101.png')
+plt.savefig('resnet-34.png')
 
-#for record in best_records:
-#    print(record)
+for i, new_records in enumerate(best_records):
+    print("Best 5 records for: ", list(workloads_dict.keys())[i][0] + ' ' + str(i))
+    for record in new_records:
+        print('\t' + str(record[0][0].config._entity_map))
