@@ -17,7 +17,7 @@ pytz==2023.3
 scipy==1.10.1
 six==1.16.0
 tenacity==8.2.2
-tornado==6.2
+tornado==6.3.2
 typing_extensions==4.5.0
 tzdata==2023.3
 xgboost==1.7.5
