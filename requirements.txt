@@ -8,7 +8,7 @@ pandas==2.0.0
 Pillow==10.3.0
 plotly==5.14.1
 progressbar2==4.2.0
-protobuf==3.20.3
+protobuf==4.25.8
 psutil==5.9.4
 pyJoules==0.5.1
 python-dateutil==2.8.2
